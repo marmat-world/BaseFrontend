@@ -1,7 +1,7 @@
 import { http } from "@/utils/http";
 
 export type UserResult = {
-  success: boolean;
+  statusCode: number,
   data: {
     /** 用户名 */
     username: string;
@@ -17,7 +17,6 @@ export type UserResult = {
 };
 
 export type RefreshTokenResult = {
-  success: boolean;
   data: {
     /** `token` */
     accessToken: string;
@@ -30,7 +29,7 @@ export type RefreshTokenResult = {
 
 /** 登录 */
 export const getLogin = (data?: object) => {
-  return http.request<UserResult>("post", "/login", { data });
+  return http.request<UserResult>("post", "/auth/loginV1", { data });
 };
 
 /** 刷新token */

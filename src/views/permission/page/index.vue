@@ -33,7 +33,7 @@ function onChange() {
   useUserStoreHook()
     .loginByUsername({ username: username.value, password: "admin123" })
     .then(res => {
-      if (res.success) {
+      if (res.statusCode) {
         storageSession().removeItem("async-routes");
         usePermissionStoreHook().clearAllCachePage();
         initRouter();
@@ -54,12 +54,7 @@ function onChange() {
         </div>
       </template>
       <el-select v-model="username" @change="onChange">
-        <el-option
-          v-for="item in options"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        />
+        <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
       </el-select>
     </el-card>
   </el-space>

@@ -1,13 +1,10 @@
-const { VITE_HIDE_HOME } = import.meta.env;
-const Layout = () => import("@/layout/index.vue");
 
 export default {
-  path: "/",
+  path: "/member",
   name: "Member",
-  component: Layout,
   redirect: "/welcome",
   meta: {
-    icon: "UserFilled",
+    icon: "informationLine",
     title: "用户",
     rank: 0
   },

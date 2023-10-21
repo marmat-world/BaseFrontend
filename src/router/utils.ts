@@ -14,12 +14,13 @@ import {
   isAllEmpty,
   intersection,
   storageSession,
+  storageLocal,
   isIncludeAllChildren
 } from "@pureadmin/utils";
 import { getConfig } from "@/config";
 import { menuType } from "@/layout/types";
 import { buildHierarchyTree } from "@/utils/tree";
-import { sessionKey, type DataInfo } from "@/utils/auth";
+import { sessionKey, type DataInfo, rolesKey } from "@/utils/auth";
 import { useMultiTagsStoreHook } from "@/store/modules/multiTags";
 import { usePermissionStoreHook } from "@/store/modules/permission";
 const IFrame = () => import("@/layout/frameView.vue");
@@ -84,7 +85,7 @@ function isOneOfArray(a: Array<string>, b: Array<string>) {
 /** 从sessionStorage里取出当前登陆用户的角色roles，过滤无权限的菜单 */
 function filterNoPermissionTree(data: RouteComponent[]) {
   const currentRoles =
-    storageSession().getItem<DataInfo<number>>(sessionKey)?.roles ?? [];
+    JSON.parse(storageLocal().getItem(rolesKey)) ?? [];
   const newTree = cloneDeep(data).filter((v: any) =>
     isOneOfArray(v.meta?.roles, currentRoles)
   );

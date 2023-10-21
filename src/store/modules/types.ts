@@ -1,4 +1,5 @@
 import { RouteRecordName } from "vue-router";
+import { type DataInfo } from "@/utils/auth";
 
 export type cacheType = {
   mode: string;
@@ -36,6 +37,6 @@ export type setType = {
 };
 
 export type userType = {
-  username?: string;
+  userInfo?: DataInfo<'userInfo'>;
   roles?: Array<string>;
 };

@@ -18,8 +18,12 @@
           start-placeholder="Start date" end-placeholder="End date" />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary">Query</el-button>
-        <el-button>Reset</el-button>
+        <el-button type="primary">查询</el-button>
+        <el-button>重置</el-button>
+        <el-button>新增</el-button>
+        <el-button>删除</el-button>
+        <el-button>导出</el-button>
+        <el-button>导入</el-button>
       </el-form-item>
     </el-form>
     <el-table :data="tableData">
@@ -27,10 +31,11 @@
       <el-table-column prop="date" label="日期" />
       <el-table-column prop="name" label="姓名" />
       <el-table-column prop="address" label="地址" />
-      <el-table-column fixed="right" label="Operations" width="120">
+      <el-table-column fixed="right" label="Operations">
         <template #default>
-          <el-button link type="primary" size="small">Detail</el-button>
-          <el-button link type="primary" size="small">Edit</el-button>
+          <el-button type="primary" size="small">查看</el-button>
+          <el-button type="primary" size="small">删除</el-button>
+          <el-button type="primary" size="small">修改</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -103,20 +108,6 @@ const tableData = [
   }
 ]
 
-const columns = [
-  {
-    label: "日期",
-    prop: "date"
-  },
-  {
-    label: "姓名",
-    prop: "name"
-  },
-  {
-    label: "地址",
-    prop: "address"
-  }
-];
 </script>
 <style lang="scss" scoped>
 .phantom-pagination {

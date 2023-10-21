@@ -16,7 +16,7 @@ const elStyle = computed((): CSSProperties => {
   };
 });
 
-const username = ref(useUserStoreHook()?.username);
+const userInfo = ref(useUserStoreHook()?.userInfo);
 
 const options = [
   {
@@ -31,7 +31,7 @@ const options = [
 
 function onChange() {
   useUserStoreHook()
-    .loginByUsername({ username: username.value, password: "admin123" })
+    .loginByUsername({ username: userInfo?.username.value, password: "admin123" })
     .then(res => {
       if (res.statusCode) {
         storageSession().removeItem("async-routes");
@@ -50,10 +50,10 @@ function onChange() {
     <el-card shadow="never" :style="elStyle">
       <template #header>
         <div class="card-header">
-          <span>当前角色：{{ username }}</span>
+          <span>当前角色：{{ userInfo.username }}</span>
         </div>
       </template>
-      <el-select v-model="username" @change="onChange">
+      <el-select v-model="userInfo.username" @change="onChange">
         <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
       </el-select>
     </el-card>

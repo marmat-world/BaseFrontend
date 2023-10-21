@@ -45,7 +45,6 @@ const onLogin = async (formEl: FormInstance | undefined) => {
       useUserStoreHook()
         .loginByUsername({ username: ruleForm.username, password: "123456" })
         .then(res => {
-          console.log(res);
           if (res.statusCode) {
             initRouter().then(() => {
               router.push(getTopMenu(true).path);

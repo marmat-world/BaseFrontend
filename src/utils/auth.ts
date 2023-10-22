@@ -1,4 +1,3 @@
-import Cookies from "js-cookie";
 import { storageSession, storageLocal } from "@pureadmin/utils";
 import { useUserStoreHook } from "@/store/modules/user";
 

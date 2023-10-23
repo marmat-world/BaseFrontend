@@ -8,6 +8,8 @@ import { MotionPlugin } from "@vueuse/motion";
 // import { useEcharts } from "@/plugins/echarts";
 import { injectResponsiveStorage } from "@/utils/responsive";
 
+import Table from "@pureadmin/table";
+
 // import Table from "@pureadmin/table";
 // import PureDescriptions from "@pureadmin/descriptions";
 
@@ -49,9 +51,9 @@ getServerConfig(app).then(async config => {
   await router.isReady();
   injectResponsiveStorage(app, config);
   setupStore(app);
-  app.use(MotionPlugin).use(ElementPlus);
-  // .use(useEcharts);
-  // .use(Table);
+  app.use(MotionPlugin).use(ElementPlus)
+    // .use(useEcharts);
+    .use(Table);
   // .use(PureDescriptions);
   app.mount("#app");
 });

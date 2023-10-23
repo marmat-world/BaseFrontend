@@ -26,29 +26,27 @@
         <el-button>导入</el-button>
       </el-form-item>
     </el-form>
-    <el-table :data="tableData">
-      <el-table-column type="selection" width="55" />
-      <el-table-column prop="date" label="日期" />
-      <el-table-column prop="name" label="姓名" />
-      <el-table-column prop="address" label="地址" />
-      <el-table-column fixed="right" label="Operations">
-        <template #default>
-          <el-button type="primary" size="small">查看</el-button>
-          <el-button type="primary" size="small">删除</el-button>
-          <el-button type="primary" size="small">修改</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-    <div class="phantom-pagination">
-      <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" :page-sizes="[10, 20, 50, 100]"
-        :background="true" layout="total, sizes, prev, pager, next, jumper" :total="400" />
-    </div>
+
+    <pure-table border row-key="id" alignWhole="center" showOverflowTooltip :loading="loading" :data="dataList"
+      :columns="columns" :pagination="pagination" @page-size-change="onSizeChange"
+      @page-current-change="onCurrentChange" />
+
   </el-card>
 </template>
 <script setup lang="ts">
 import dayjs from "dayjs";
 import { reactive, ref } from 'vue'
+import { useColumns } from "./columns";
 const date = dayjs(new Date()).format("YYYY-MM-DD");
+
+const {
+  loading,
+  columns,
+  dataList,
+  pagination,
+  onSizeChange,
+  onCurrentChange
+} = useColumns();
 
 const formInline = reactive({
   user: '',
@@ -56,63 +54,6 @@ const formInline = reactive({
   date: '',
   rangeTime: ''
 })
-const currentPage = ref(1)
-const pageSize = ref(10)
-
-const handleSizeChange = (val: number) => {
-  console.log(`${val} items per page`)
-}
-const handleCurrentChange = (val: number) => {
-  console.log(`current page: ${val}`)
-}
-const tableData = [
-  {
-    date,
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles"
-  },
-  {
-    date,
-    name: "Jack",
-    address: "No. 189, Grove St, Los Angeles"
-  },
-  {
-    date,
-    name: "Dick",
-    address: "No. 189, Grove St, Los Angeles"
-  },
-  {
-    date,
-    name: "Harry",
-    address: "No. 189, Grove St, Los Angeles"
-  },
-  {
-    date,
-    name: "Sam",
-    address: "No. 189, Grove St, Los Angeles"
-  },
-  {
-    date,
-    name: "Lucy",
-    address: "No. 189, Grove St, Los Angeles"
-  },
-  {
-    date,
-    name: "Mary",
-    address: "No. 189, Grove St, Los Angeles"
-  },
-  {
-    date,
-    name: "Mike",
-    address: "No. 189, Grove St, Los Angeles"
-  }
-]
 
 </script>
-<style lang="scss" scoped>
-.phantom-pagination {
-  margin-top: 20px;
-  display: flex;
-  justify-content: flex-end;
-}
-</style>
+<style lang="scss" scoped></style>

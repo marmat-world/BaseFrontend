@@ -4,7 +4,7 @@ export default {
   name: "Member",
   redirect: "/welcome",
   meta: {
-    icon: "",
+    icon: "IF-pure-iconfont-tabs",
     title: "用户",
     rank: 0
   },

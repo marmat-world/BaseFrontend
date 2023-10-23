@@ -41,3 +41,7 @@ export const getLogin = (data?: object) => {
 export const refreshTokenApi = (data?: object) => {
   return http.request<RefreshTokenResult>("post", "/refreshToken", { data });
 };
+
+export const getMethodList = (data) => {
+  return http.request("post", "/adminmethod/getMethodAll", { data })
+}

@@ -18,7 +18,7 @@
           value-format="YYYY-MM-DD" />
       </el-form-item>
       <el-form-item label="时间范围">
-        <el-date-picker v-model="formInline.rangeTime" type="datetimerange" format="YYYY-MM-DD" value-format="YYYY-MM-DD"
+        <el-date-picker v-model="formInline.rangeTime" type="daterange" format="YYYY-MM-DD" value-format="YYYY-MM-DD"
           range-separator="To" start-placeholder="开始时间" end-placeholder="结束时间" />
       </el-form-item>
       <el-form-item>
@@ -52,7 +52,7 @@ const columns = [
   },
   {
     label: "姓名",
-    prop: "method_en_name"
+    prop: "method_cn_name"
   },
   {
     label: "地址",

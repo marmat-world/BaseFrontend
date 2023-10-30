@@ -24,7 +24,7 @@
       <el-form-item>
         <el-button type="primary" @click="searchMethod">查询</el-button>
         <el-button @click="reset">重置</el-button>
-        <el-button type="success" @click="addAction">新增</el-button>
+        <el-button type="success" @click="openDialog()">新增</el-button>
         <el-button type="danger" @click="deleteBatchAction">删除</el-button>
         <el-button type="success" @click="exportAction">导出</el-button>
         <el-button type="success" @click="importAction">导入</el-button>
@@ -41,7 +41,7 @@
         <el-button type="primary" size="small">
           查看
         </el-button>
-        <el-button type="info" size="small">
+        <el-button type="info" @click="openDialog('编辑', row)" size="small">
           编辑
         </el-button>
         <el-button type="danger" size="small">
@@ -56,7 +56,14 @@ import { reactive, ref, onMounted } from 'vue'
 import { getMethodList } from '@/api/user'
 import { ElNotification } from 'element-plus'
 import dayjs from 'dayjs';
-
+import { useColumns } from "./columns";
+const {
+  form,
+  resetForm,
+  openDialog,
+  handleDelete,
+  handleSelectionChange
+} = useColumns();
 const columns = [
   {
     type: "selection",

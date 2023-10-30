@@ -7,18 +7,25 @@ import { storageSession, storageLocal } from "@pureadmin/utils";
 import { getLogin, refreshTokenApi } from "@/api/user";
 import { UserResult, RefreshTokenResult } from "@/api/user";
 import { useMultiTagsStoreHook } from "@/store/modules/multiTags";
-import { type DataInfo, setToken, removeToken, TokenKey, sessionKey, rolesKey } from "@/utils/auth";
+import {
+  type DataInfo,
+  setToken,
+  removeToken,
+  TokenKey,
+  sessionKey,
+  rolesKey
+} from "@/utils/auth";
 
 const userTypeData = {
   userInfo() {
-    const userInfo: string = storageLocal().getItem(sessionKey)
+    const userInfo: string = storageLocal().getItem(sessionKey);
     return userInfo ? JSON.parse(userInfo) : {};
   },
   role() {
     const r: string = storageLocal().getItem(rolesKey);
     return r ? JSON.parse(r) : [];
   }
-}
+};
 
 export const useUserStore = defineStore({
   id: "pure-user",
@@ -30,7 +37,7 @@ export const useUserStore = defineStore({
   }),
   actions: {
     /** 存储用户名 */
-    SET_USERINFO(userInfo: DataInfo['userInfo']) {
+    SET_USERINFO(userInfo: DataInfo["userInfo"]) {
       this.userInfo = userInfo;
     },
     /** 存储角色 */

@@ -1,24 +1,24 @@
 import { http } from "@/utils/http";
 
 export type UserResult = {
-  statusCode: number,
+  statusCode: number;
   data: {
     /** token */
     tokenInfo: {
       /** `token值 */
-      token: string,
+      token: string;
       /** `accessToken`的过期时间（时间戳） */
-      expires: number
-    },
+      expires: number;
+    };
     userInfo: {
-      avatar: string,
+      avatar: string;
       /** 用户名 */
-      username: string,
-      id: number,
-      last_login_time: number
+      username: string;
+      id: number;
+      last_login_time: number;
       roles?: Array<string>;
-    }
-  }
+    };
+  };
 };
 
 export type RefreshTokenResult = {
@@ -43,5 +43,23 @@ export const refreshTokenApi = (data?: object) => {
 };
 
 export const getMethodList = (data, pageInfo) => {
-  return http.request("post", `/adminmethod/getMethodList?pageSize=${pageInfo.pageSize}&current=${pageInfo.current}`, { data })
-}
+  return http.request("post", `/adminmethod/getMethodList`, {
+    data,
+    params: pageInfo
+  });
+};
+
+export const addMethod = data => {
+  return http.request("post", `/adminmethod/addMethod`, { data });
+};
+
+export const getMethodDetail = data => {
+  return http.request("get", `/adminmethod/getMethodDetail`, { params: data });
+};
+
+export const updateMethod = data => {
+  return http.request("patch", `/adminmethod/updateMethod`, {
+    data,
+    params: { id: data.id }
+  });
+};

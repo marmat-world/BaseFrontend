@@ -63,3 +63,17 @@ export const updateMethod = data => {
     params: { id: data.id }
   });
 };
+
+export const deleteMethod = data => {
+  return http.request("delete", `/adminmethod/deleteMethod`, {
+    data,
+    params: { id: data.id }
+  });
+}
+
+export const deleteBatchMethod = data => {
+  return http.request("delete", `/adminmethod/deleteMethod`, {
+    data,
+    params: { ids: data }
+  });
+}

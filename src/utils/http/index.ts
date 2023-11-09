@@ -18,7 +18,7 @@ import { useUserStoreHook } from "@/store/modules/user";
 
 // 相关配置请参考：www.axios-js.com/zh-cn/docs/#axios-request-config-1
 const defaultConfig: AxiosRequestConfig = {
-  baseURL: "http://localhost:3000",
+  baseURL: "http://localhost:8080",
   // 请求超时时间
   timeout: 10000,
   headers: {
@@ -80,38 +80,38 @@ class PureHttp {
         return whiteList.some(v => config.url.indexOf(v) > -1)
           ? config
           : new Promise(resolve => {
-              const data = getToken();
-              if (data) {
-                const now = new Date().getTime();
-                const expired = parseInt(data.expires) - now <= 0;
-                if (expired) {
-                  if (!PureHttp.isRefreshing) {
-                    PureHttp.isRefreshing = true;
-                    // token过期刷新
-                    // useUserStoreHook()
-                    //   .handRefreshToken({ refreshToken: data.refreshToken })
-                    //   .then(res => {
-                    //     const token = res.data.accessToken;
-                    //     config.headers["Authorization"] = formatToken(token);
-                    //     PureHttp.requests.forEach(cb => cb(token));
-                    //     PureHttp.requests = [];
-                    //   })
-                    //   .finally(() => {
-                    //     PureHttp.isRefreshing = false;
-                    //   });
-                    message("token过期", { type: "error" });
-                    removeToken();
-                    router.push("/login");
-                  }
-                  resolve(PureHttp.retryOriginalRequest(config));
-                } else {
-                  config.headers["Authorization"] = formatToken(data.token);
-                  resolve(config);
+            const data = getToken();
+            if (data) {
+              const now = new Date().getTime();
+              const expired = parseInt(data.expires) - now <= 0;
+              if (expired) {
+                if (!PureHttp.isRefreshing) {
+                  PureHttp.isRefreshing = true;
+                  // token过期刷新
+                  // useUserStoreHook()
+                  //   .handRefreshToken({ refreshToken: data.refreshToken })
+                  //   .then(res => {
+                  //     const token = res.data.accessToken;
+                  //     config.headers["Authorization"] = formatToken(token);
+                  //     PureHttp.requests.forEach(cb => cb(token));
+                  //     PureHttp.requests = [];
+                  //   })
+                  //   .finally(() => {
+                  //     PureHttp.isRefreshing = false;
+                  //   });
+                  message("token过期", { type: "error" });
+                  removeToken();
+                  router.push("/login");
                 }
+                resolve(PureHttp.retryOriginalRequest(config));
               } else {
+                config.headers["Authorization"] = formatToken(data.token);
                 resolve(config);
               }
-            });
+            } else {
+              resolve(config);
+            }
+          });
       },
       error => {
         return Promise.reject(error);

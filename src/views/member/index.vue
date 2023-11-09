@@ -28,7 +28,7 @@
     </el-form>
     <PureTableBar title="" :columns="columns" :tableRef="tableRef?.getTableRef()" @refresh="getDataList">
       <template #buttons>
-        <el-button type="primary" @click="openDialog({ title: '新增', type: 1 })">新增</el-button>
+        <el-button type="primary" @click="openDialog({ type: 1, itemInfo: null })">新增</el-button>
         <el-button type="danger" @click="deleteBatchAction">删除</el-button>
         <el-button type="success" @click="exportAction">导出</el-button>
         <el-button type="success" @click="importAction">导入</el-button>
@@ -44,19 +44,20 @@
             {{ dayjs(row.create_time).format('YYYY-MM-DD HH:mm:ss') }}
           </template>
           <template #operation="{ row }">
-            <el-button type="info" @click="openDialog({ title: '编辑', type: 2, id: row.id })" size="small">
+            <el-button type="info" @click="openDialog({ type: 2, itemInfo: row })" size="small">
               编辑
             </el-button>
             <el-button type="danger" size="small" @click="deleteItem">
               删除
             </el-button>
-            <el-button type="primary" size="small" @click="openDialog({ title: '查看', type: 3, id: row.id })">
+            <el-button type="primary" size="small" @click="openDialog({ type: 3, itemInfo: row })">
               查看
             </el-button>
           </template>
         </pure-table>
       </template>
     </PureTableBar>
+    <DataForm v-model:dialog-visible="formDialog" :dataForm="formData" :type="formType" />
   </div>
 </template>
 <script setup>
@@ -64,10 +65,8 @@ import { reactive, ref, onMounted, h } from 'vue'
 import { getMethodList, getMethodDetail, deleteMethod, deleteBatchMethod } from '@/api/user'
 import { ElNotification, ElMessageBox } from 'element-plus'
 import dayjs from 'dayjs';
-import { addDialog } from "@/components/ReDialog";
 import { PureTableBar } from '@/components/RePureTableBar';
-import editForm from "./form.vue";
-import { message } from "@/utils/message";
+import DataForm from "./form.vue";
 
 const formRef = ref()
 const tableRef = ref();
@@ -89,6 +88,17 @@ const pagination = reactive({
   background: true,
   small: false
 });
+
+const formData = reactive({
+  method_cn_name: '',
+  method_en_name: '',
+  status: '',
+  time: ''
+})
+
+const formType = ref(1);
+
+const formDialog = ref(false);
 
 const reset = () => {
   modelParams.keyword = '';
@@ -199,37 +209,15 @@ const getDataList = async () => {
   loading.value = false;
 }
 
-const openDialog = async ({ title, id, type }) => {
-  const res = id ? await getMethodDetail({ id }) : { data: {} };
-  const row = res.data;
-  addDialog({
-    title: `${title}方法`,
-    props: {
-      row: {
-        id: row?.id ?? 0,
-        method_cn_name: row?.method_cn_name ?? "",
-        method_en_name: row?.method_en_name ?? "",
-        status: row?.status ?? 1,
-        time: row?.time ?? ""
-      }
-    },
-    width: "50%",
-    draggable: true,
-    closeOnClickModal: false,
-    contentRenderer: () => h(editForm, { ref: formRef }),
-    beforeSure: async (done, { options }) => {
-      const FormRef = formRef.value.getRef();
-      const curData = options.props.row;
-      const res = id ? await updateMethod(curData) : await addMethod(curData);
-      message(`您${title}了部门名称为${curData.method_cn_name}的这条数据`, {
-        type: "success"
-      });
-      done();
-      getDataList()
-    }
-  });
-
+const openDialog = async ({ type, itemInfo }) => {
+  formData.method_cn_name = itemInfo?.method_cn_name ?? '';
+  formData.method_en_name = itemInfo?.method_en_name ?? '';
+  formData.status = itemInfo?.status ?? '';
+  formData.time = itemInfo?.time ?? '';
+  formType.value = type;
+  formDialog.value = true;
 }
+
 const deleteItem = (data) => {
   ElMessageBox.confirm(
     '是否删除此数据？',

@@ -3,24 +3,33 @@
     <el-form ref="ruleFormRef" :model="newFormInline" label-width="82px">
       <el-row :gutter="30">
         <re-col :value="12" :xs="24" :sm="24">
-          <el-form-item label="部门名称" prop="method_cn_name">
-            <el-input v-model="newFormInline.method_cn_name" :disabled="type === 3" clearable placeholder="请输入部门名称" />
+          <el-form-item label="方法名(中)" prop="method_cn_name">
+            <el-input v-model="newFormInline.method_cn_name" :disabled="type === 3" clearable placeholder="请输入中文方法名" />
           </el-form-item>
         </re-col>
         <re-col :value="12" :xs="24" :sm="24">
-          <el-form-item label="部门负责人" prop="method_en_name">
-            <el-input v-model="newFormInline.method_en_name" :disabled="type === 3" clearable placeholder="请输入部门负责人" />
-          </el-form-item>
-        </re-col>
-
-        <re-col :value="12" :xs="24" :sm="24">
-          <el-form-item label="手机号" prop="status">
-            <el-input v-model="newFormInline.status" :disabled="type === 3" clearable placeholder="请输入手机号" />
+          <el-form-item label="方法名(英)" prop="method_en_name">
+            <el-input v-model="newFormInline.method_en_name" :disabled="type === 3" clearable placeholder="请输入英文方法名" />
           </el-form-item>
         </re-col>
         <re-col :value="12" :xs="24" :sm="24">
-          <el-form-item label="邮箱" prop="time">
-            <el-input v-model="newFormInline.time" :disabled="type === 3" clearable placeholder="请输入邮箱" />
+          <el-form-item label="状态" prop="status">
+            <el-input v-model="newFormInline.status" :disabled="type === 3" clearable placeholder="请输入状态" />
+          </el-form-item>
+        </re-col>
+        <re-col :value="12" :xs="24" :sm="24">
+          <el-form-item label="按钮" prop="time">
+            <el-input v-model="newFormInline.btn_icon" :disabled="type === 3" clearable placeholder="请输入按钮" />
+          </el-form-item>
+        </re-col>
+        <re-col :value="12" :xs="24" :sm="24">
+          <el-form-item label="菜单" prop="status">
+            <el-input v-model="newFormInline.menu_id" :disabled="type === 3" clearable placeholder="请输入菜单" />
+          </el-form-item>
+        </re-col>
+        <re-col :value="12" :xs="24" :sm="24">
+          <el-form-item label="类型" prop="time">
+            <el-input v-model="newFormInline.method_type" :disabled="type === 3" clearable placeholder="请输入类型" />
           </el-form-item>
         </re-col>
       </el-row>
@@ -36,8 +45,10 @@
   </el-dialog>
 </template>
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import ReCol from "@/components/ReCol";
+import { addMethod, getMethodDetail, updateMethod } from '@/api/user'
+import { ElNotification } from 'element-plus'
 const props = defineProps({
   dialogVisible: {
     type: Boolean,
@@ -47,24 +58,22 @@ const props = defineProps({
     type: Number,
     default: 1
   },
-  dataForm: {
-    type: Object,
-    default() {
-      return {
-        method_cn_name: '',
-        method_en_name: '',
-        status: '',
-        time: ''
-      }
-    }
+  formId: {
+    type: Number,
+    default: 0
   }
 })
 
-const Emit = defineEmits(['update:dialogVisible'])
-
-console.log(props.dataForm)
+const Emit = defineEmits(['update:dialogVisible', 'initList'])
 const ruleFormRef = ref();
-const newFormInline = ref(props.dataForm);
+const newFormInline = ref({
+  method_cn_name: '',
+  method_en_name: '',
+  status: '',
+  btn_icon: '',
+  menu_id: '',
+  method_type: ''
+});
 
 const formTitle = computed(() => {
   const { type } = props
@@ -72,13 +81,38 @@ const formTitle = computed(() => {
   if (type === 2) return '编辑'
   if (type === 3) return '查看'
 })
+watch(() => props.dialogVisible,
+  async (newX) => {
+    if (!newX || props.formId === 0) return;
+    const res = await getMethodDetail(props.formId);
+    if (res) {
+      newFormInline.value = res.data;
+    }
+  })
 
-const submitAction = () => {
-
+const submitAction = async () => {
+  const res = props.formId === 0 ? await addMethod(newFormInline.value) : await updateMethod({
+    ...newFormInline.value,
+    id: props.formId
+  });
+  if (res.statusCode === 200) {
+    Emit('initList')
+    ElNotification({
+      message: props.formId === 0 ? '新增成功' : '修改成功',
+      type: 'success',
+    })
+    cancelAction();
+  }
 }
 
 const cancelAction = () => {
-  Emit('update:dialogVisible', false)
+  Emit('update:dialogVisible', false);
+  newFormInline.value = {
+    method_cn_name: '',
+    method_en_name: '',
+    status: '',
+    btn_icon: ''
+  }
 }
 
 function getRef() {
@@ -86,6 +120,11 @@ function getRef() {
 }
 
 defineExpose({ getRef });
+
+onMounted(() => {
+});
+
+
 </script>
 
 

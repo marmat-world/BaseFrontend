@@ -53,8 +53,8 @@ export const addMethod = data => {
   return http.request("post", `/adminmethod/addMethod`, { data });
 };
 
-export const getMethodDetail = data => {
-  return http.request("get", `/adminmethod/getMethodDetail`, { params: data });
+export const getMethodDetail = id => {
+  return http.request("get", `/adminmethod/getMethodDetail`, { params: { id } });
 };
 
 export const updateMethod = data => {
@@ -66,7 +66,6 @@ export const updateMethod = data => {
 
 export const deleteMethod = data => {
   return http.request("delete", `/adminmethod/deleteMethod`, {
-    data,
     params: { id: data.id }
   });
 }

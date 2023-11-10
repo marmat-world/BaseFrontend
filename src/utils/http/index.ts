@@ -15,6 +15,7 @@ import { message } from "@/utils/message";
 import NProgress from "../progress";
 import { getToken, formatToken, removeToken } from "@/utils/auth";
 import { useUserStoreHook } from "@/store/modules/user";
+import { ElNotification } from 'element-plus'
 
 // 相关配置请参考：www.axios-js.com/zh-cn/docs/#axios-request-config-1
 const defaultConfig: AxiosRequestConfig = {
@@ -135,6 +136,13 @@ class PureHttp {
         if (PureHttp.initConfig.beforeResponseCallback) {
           PureHttp.initConfig.beforeResponseCallback(response);
           return response.data;
+        }
+        if ([40001, 40002].includes(response.data.statusCode)) {
+          ElNotification({
+            title: '提醒',
+            message: response.data.message,
+            type: 'info',
+          })
         }
         return response.data;
       },

@@ -28,7 +28,7 @@
     </el-form>
     <PureTableBar title="" :columns="columns" :tableRef="tableRef?.getTableRef()" @refresh="getDataList">
       <template #buttons>
-        <el-button type="primary" @click="openDialog({ type: 1, itemInfo: null })">新增</el-button>
+        <el-button type="primary" @click="openDialog({ type: 1, id: 0 })">新增</el-button>
         <el-button type="danger" @click="deleteBatchAction">删除</el-button>
         <el-button type="success" @click="exportAction">导出</el-button>
         <el-button type="success" @click="importAction">导入</el-button>
@@ -44,25 +44,25 @@
             {{ dayjs(row.create_time).format('YYYY-MM-DD HH:mm:ss') }}
           </template>
           <template #operation="{ row }">
-            <el-button type="info" @click="openDialog({ type: 2, itemInfo: row })" size="small">
+            <el-button type="info" @click="openDialog({ type: 2, id: row.id })" size="small">
               编辑
             </el-button>
-            <el-button type="danger" size="small" @click="deleteItem">
+            <el-button type="danger" size="small" @click="deleteItem(row)">
               删除
             </el-button>
-            <el-button type="primary" size="small" @click="openDialog({ type: 3, itemInfo: row })">
+            <el-button type="primary" size="small" @click="openDialog({ type: 3, id: row.id })">
               查看
             </el-button>
           </template>
         </pure-table>
       </template>
     </PureTableBar>
-    <DataForm v-model:dialog-visible="formDialog" :dataForm="formData" :type="formType" />
+    <DataForm v-model:dialog-visible="formDialog" @init-list="searchMethod" :form-id="formId" :type="formType" />
   </div>
 </template>
 <script setup>
 import { reactive, ref, onMounted, h } from 'vue'
-import { getMethodList, getMethodDetail, deleteMethod, deleteBatchMethod } from '@/api/user'
+import { getMethodList, deleteMethod, deleteBatchMethod } from '@/api/user'
 import { ElNotification, ElMessageBox } from 'element-plus'
 import dayjs from 'dayjs';
 import { PureTableBar } from '@/components/RePureTableBar';
@@ -89,16 +89,10 @@ const pagination = reactive({
   small: false
 });
 
-const formData = reactive({
-  method_cn_name: '',
-  method_en_name: '',
-  status: '',
-  time: ''
-})
 
 const formType = ref(1);
-
 const formDialog = ref(false);
+const formId = ref(0);
 
 const reset = () => {
   modelParams.keyword = '';
@@ -172,8 +166,12 @@ const columns = [
     prop: "method_en_name"
   },
   {
-    label: "地址",
+    label: "状态",
     prop: "status"
+  },
+  {
+    label: "图标",
+    prop: "btn_icon"
   },
   {
     label: "日期",
@@ -209,11 +207,8 @@ const getDataList = async () => {
   loading.value = false;
 }
 
-const openDialog = async ({ type, itemInfo }) => {
-  formData.method_cn_name = itemInfo?.method_cn_name ?? '';
-  formData.method_en_name = itemInfo?.method_en_name ?? '';
-  formData.status = itemInfo?.status ?? '';
-  formData.time = itemInfo?.time ?? '';
+const openDialog = async ({ type, id }) => {
+  formId.value = id;
   formType.value = type;
   formDialog.value = true;
 }
@@ -230,7 +225,7 @@ const deleteItem = (data) => {
   )
     .then(async () => {
       const res = await deleteMethod(data);
-      if (res) {
+      if (res.statusCode === 200) {
         pagination.currentPage = 1;
         getDataList();
         ElNotification({

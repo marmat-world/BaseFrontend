@@ -14,22 +14,31 @@
         </re-col>
         <re-col :value="12" :xs="24" :sm="24">
           <el-form-item label="状态" prop="status">
-            <el-input v-model="newFormInline.status" :disabled="type === 3" clearable placeholder="请输入状态" />
+            <el-select v-model="newFormInline.status" :disabled="type === 3" clearable style="width: 100%;"
+              placeholder="请选择状态">
+              <el-option label="启用" :value="1" />
+              <el-option label="禁用" :value="0" />
+            </el-select>
           </el-form-item>
         </re-col>
         <re-col :value="12" :xs="24" :sm="24">
-          <el-form-item label="按钮" prop="time">
+          <el-form-item label="按钮" prop="btn_icon">
             <el-input v-model="newFormInline.btn_icon" :disabled="type === 3" clearable placeholder="请输入按钮" />
           </el-form-item>
         </re-col>
         <re-col :value="12" :xs="24" :sm="24">
-          <el-form-item label="菜单" prop="status">
+          <el-form-item label="菜单" prop="menu_id">
             <el-input v-model="newFormInline.menu_id" :disabled="type === 3" clearable placeholder="请输入菜单" />
           </el-form-item>
         </re-col>
         <re-col :value="12" :xs="24" :sm="24">
-          <el-form-item label="类型" prop="time">
+          <el-form-item label="类型" prop="method_type">
             <el-input v-model="newFormInline.method_type" :disabled="type === 3" clearable placeholder="请输入类型" />
+          </el-form-item>
+        </re-col>
+        <re-col :value="12" :xs="24" :sm="24">
+          <el-form-item label="日期" prop="time">
+            <el-date-picker v-model="newFormInline.time" type="date" placeholder="选择时间" style="width: 100%" />
           </el-form-item>
         </re-col>
       </el-row>
@@ -47,7 +56,7 @@
 <script setup>
 import { ref, computed, onMounted, watch } from "vue";
 import ReCol from "@/components/ReCol";
-import { addMethod, getMethodDetail, updateMethod } from '@/api/user'
+import { addMethod, getMethodDetail, updateMethod } from '@/api/demo'
 import { ElNotification } from 'element-plus'
 const props = defineProps({
   dialogVisible: {
@@ -72,7 +81,8 @@ const newFormInline = ref({
   status: '',
   btn_icon: '',
   menu_id: '',
-  method_type: ''
+  method_type: '',
+  time: ''
 });
 
 const formTitle = computed(() => {

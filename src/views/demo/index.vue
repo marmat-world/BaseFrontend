@@ -31,7 +31,7 @@
         <el-button type="primary" @click="openDialog({ type: 1, id: 0 })">新增</el-button>
         <el-button type="danger" @click="deleteBatchAction">删除</el-button>
         <el-button type="success" @click="exportAction">导出</el-button>
-        <el-button type="success" @click="importAction">导入</el-button>
+        <el-button type="info" @click="importAction">导入</el-button>
       </template>
       <template v-slot="{ size, dynamicColumns }">
         <pure-table row-key="id" :header-cell-style="{
@@ -58,17 +58,19 @@
       </template>
     </PureTableBar>
     <DataForm v-model:dialog-visible="formDialog" @init-list="searchMethod" :form-id="formId" :type="formType" />
+    <ImportData v-model:dialog-visible="importDialog" @init-list="searchMethod" />
   </div>
 </template>
 <script setup>
-import { reactive, ref, onMounted, h } from 'vue'
-import { getMethodList, deleteMethod, deleteBatchMethod } from '@/api/user'
+import { reactive, ref, onMounted } from 'vue'
+import { getMethodList, deleteMethod, deleteMethodBatch } from '@/api/demo'
 import { ElNotification, ElMessageBox } from 'element-plus'
 import dayjs from 'dayjs';
 import { PureTableBar } from '@/components/RePureTableBar';
 import DataForm from "./form.vue";
+import ImportData from "./importData.vue";
 
-const formRef = ref()
+
 const tableRef = ref();
 const dataList = ref([]);
 const loading = ref(true);
@@ -78,7 +80,7 @@ const modelParams = reactive({
   create_time: '',
   rangeTime: ''
 })
-/** 分页配置 */
+/* 分页配置 */
 const pagination = reactive({
   pageSize: 10,
   currentPage: 1,
@@ -92,6 +94,7 @@ const pagination = reactive({
 
 const formType = ref(1);
 const formDialog = ref(false);
+const importDialog = ref(false);
 const formId = ref(0);
 
 const reset = () => {
@@ -99,56 +102,6 @@ const reset = () => {
   modelParams.method_type = '';
   modelParams.create_time = '';
   modelParams.rangeTime = '';
-}
-
-const deleteBatchAction = async () => {
-  const { getSelectionRows } = tableRef.value.getTableRef();
-  if (getSelectionRows().length === 0) {
-    ElNotification({
-      title: '提醒',
-      message: '请选择需要删除的数据',
-      type: 'warning',
-    })
-    return
-  }
-  const res = await deleteBatchMethod(getSelectionRows().map(v => v.id));
-  if (res) {
-    pagination.currentPage = 1;
-    getDataList();
-    ElNotification({
-      title: '提醒',
-      message: '删除成功',
-      type: 'success',
-    })
-  }
-
-}
-
-const exportAction = () => {
-
-}
-
-const importAction = () => {
-
-}
-
-const searchMethod = () => {
-  loading.value = true;
-  pagination.currentPage = 1;
-  getDataList();
-}
-
-const onSizeChange = (val) => {
-  loading.value = true;
-  pagination.pageSize = val;
-  pagination.currentPage = 1;
-  getDataList();
-}
-
-const onCurrentChange = (val) => {
-  loading.value = true;
-  pagination.currentPage = val;
-  getDataList();
 }
 
 const columns = [
@@ -184,6 +137,93 @@ const columns = [
   }
 ];
 
+const deleteItem = (data) => {
+  ElMessageBox.confirm(
+    '是否删除此数据？',
+    '提示',
+    {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning',
+    }
+  )
+    .then(async () => {
+      const res = await deleteMethod(data);
+      if (res.statusCode === 200) {
+        pagination.currentPage = 1;
+        getDataList();
+        ElNotification({
+          title: '提醒',
+          message: '删除成功',
+          type: 'success',
+        })
+      }
+    })
+    .catch(() => {
+    })
+}
+
+const deleteBatchAction = async () => {
+  const { getSelectionRows } = tableRef.value.getTableRef();
+  if (getSelectionRows().length === 0) {
+    ElNotification({
+      title: '提醒',
+      message: '请选择需要删除的数据',
+      type: 'warning',
+    })
+    return
+  }
+
+  ElMessageBox.confirm(
+    '是否删除选中数据？',
+    '提示',
+    {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning',
+    }
+  ).then(async () => {
+    const res = await deleteMethodBatch(getSelectionRows().map(v => v.id));
+    if (res.statusCode === 200) {
+      pagination.currentPage = 1;
+      getDataList();
+      tableRef.value.clearSelection()
+      ElNotification({
+        title: '提醒',
+        message: '删除成功',
+        type: 'success',
+      })
+    }
+  })
+
+}
+
+const exportAction = () => {
+}
+
+const importAction = () => {
+  importDialog.value = true;
+}
+
+const searchMethod = () => {
+  loading.value = true;
+  pagination.currentPage = 1;
+  getDataList();
+}
+
+const onSizeChange = (val) => {
+  loading.value = true;
+  pagination.pageSize = val;
+  pagination.currentPage = 1;
+  getDataList();
+}
+
+const onCurrentChange = (val) => {
+  loading.value = true;
+  pagination.currentPage = val;
+  getDataList();
+}
+
 
 const getDataList = async () => {
   const paramData = {}
@@ -213,31 +253,6 @@ const openDialog = async ({ type, id }) => {
   formDialog.value = true;
 }
 
-const deleteItem = (data) => {
-  ElMessageBox.confirm(
-    '是否删除此数据？',
-    '提示',
-    {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning',
-    }
-  )
-    .then(async () => {
-      const res = await deleteMethod(data);
-      if (res.statusCode === 200) {
-        pagination.currentPage = 1;
-        getDataList();
-        ElNotification({
-          title: '提醒',
-          message: '删除成功',
-          type: 'success',
-        })
-      }
-    })
-    .catch(() => {
-    })
-}
 onMounted(() => {
   getDataList();
 });

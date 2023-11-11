@@ -1,6 +1,6 @@
 import { clone, delay } from "@pureadmin/utils";
 import { ref, onMounted, reactive, h } from "vue";
-import { getMethodDetail, addMethod, updateMethod, getMethodList } from '@/api/user'
+import { getMethodDetail, addMethod, updateMethod, getMethodList } from '@/api/demo'
 import { addDialog } from "@/components/ReDialog";
 import editForm from "./form.vue";
 import { message } from "@/utils/message";

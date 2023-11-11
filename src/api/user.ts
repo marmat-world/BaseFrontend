@@ -41,38 +41,3 @@ export const getLogin = (data?: object) => {
 export const refreshTokenApi = (data?: object) => {
   return http.request<RefreshTokenResult>("post", "/refreshToken", { data });
 };
-
-export const getMethodList = (data, pageInfo) => {
-  return http.request("post", `/adminmethod/getMethodList`, {
-    data,
-    params: pageInfo
-  });
-};
-
-export const addMethod = data => {
-  return http.request("post", `/adminmethod/addMethod`, { data });
-};
-
-export const getMethodDetail = id => {
-  return http.request("get", `/adminmethod/getMethodDetail`, { params: { id } });
-};
-
-export const updateMethod = data => {
-  return http.request("patch", `/adminmethod/updateMethod`, {
-    data,
-    params: { id: data.id }
-  });
-};
-
-export const deleteMethod = data => {
-  return http.request("delete", `/adminmethod/deleteMethod`, {
-    params: { id: data.id }
-  });
-}
-
-export const deleteBatchMethod = data => {
-  return http.request("delete", `/adminmethod/deleteMethod`, {
-    data,
-    params: { ids: data }
-  });
-}

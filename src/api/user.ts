@@ -34,7 +34,7 @@ export type RefreshTokenResult = {
 
 /** 登录 */
 export const getLogin = (data?: object) => {
-  return http.request<UserResult>("post", "/auth/login", { data });
+  return http.request<UserResult>("post", "/auth/admin/login", { data });
 };
 
 /** 刷新token */

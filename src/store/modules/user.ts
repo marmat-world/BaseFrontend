@@ -18,18 +18,18 @@ import {
 
 const userTypeData = {
   userInfo() {
-    const userInfo: string = storageLocal().getItem(sessionKey);
-    return userInfo ? JSON.parse(userInfo) : {};
+    const userInfo = storageLocal().getItem(sessionKey);
+    return userInfo ?? {};
   },
   role() {
-    const r: string = storageLocal().getItem(rolesKey);
-    return r ? JSON.parse(r) : [];
+    const r = storageLocal().getItem(rolesKey);
+    return r ?? [];
   }
 };
 
 export const useUserStore = defineStore({
   id: "pure-user",
-  state: (): userType => ({
+  state: () => ({
     // 用户名
     userInfo: userTypeData.userInfo(),
     // 页面级别权限

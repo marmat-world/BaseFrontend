@@ -24,10 +24,10 @@ export const TokenKey = "authorized-token";
 export const rolesKey = 'roles-key';
 
 /** 获取`token` */
-export function getToken(): DataInfo['tokenInfo'] {
+export function getToken() {
   // 此处与`TokenKey`相同，此写法解决初始化时`Cookies`中不存在`TokenKey`报错
-  const tokenInfo: string = storageLocal().getItem(TokenKey)
-  return tokenInfo ? JSON.parse(tokenInfo) : {};
+  const tokenInfo = storageLocal().getItem(TokenKey)
+  return tokenInfo ?? {};
 }
 
 /**
@@ -39,15 +39,12 @@ export function getToken(): DataInfo['tokenInfo'] {
 export function setToken(data: DataInfo) {
   const { userInfo, tokenInfo } = data;
   // 如果后端直接设置时间戳，将此处代码改为expires = data.expires，然后把上面的DataInfo<Date>改成DataInfo<number>即可
-  const tokenInfoString = JSON.stringify(tokenInfo);
-  const userInfoString = JSON.stringify(userInfo)
-  const roleString = JSON.stringify(userInfo.roles)
 
   useUserStoreHook().SET_USERINFO(userInfo);
   useUserStoreHook().SET_ROLES(userInfo.roles);
-  storageLocal().setItem(TokenKey, tokenInfoString);
-  storageLocal().setItem(sessionKey, userInfoString);
-  storageLocal().setItem(rolesKey, roleString);
+  storageLocal().setItem(TokenKey, tokenInfo);
+  storageLocal().setItem(sessionKey, userInfo);
+  storageLocal().setItem(rolesKey, userInfo.roles);
 
 }
 

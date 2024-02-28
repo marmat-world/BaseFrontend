@@ -53,6 +53,8 @@ const onLogin = async (formEl: FormInstance | undefined) => {
           }
           // 获取后端路由
 
+        }).catch(err => {
+          loading.value = false;
         });
     } else {
       loading.value = false;
